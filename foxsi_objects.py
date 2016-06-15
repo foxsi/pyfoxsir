@@ -47,7 +47,11 @@ class Foxsi2PhotonList():
         foxsi_spec = Foxsi2Spectrum(self, time_range = time_range, ebins = ebins)
 
         return foxsi_spec
-        
+
+    def get_lightcurve(self, time_range=[69100,69600], energy_range=[0,100])
+        foxsi_lc = Foxsi2LightCurve(self,time_range = time_range, energy_range = energy_range)
+
+        return foxsi_lc
         
         
 class Foxsi2Spectrum():
