@@ -42,9 +42,54 @@ class Foxsi2PhotonList():
         foxsi_map = sunpy.map.GenericMap(img, dict_header)
         
         return foxsi_map
+
+    def get_spectrum(self, time_range=[69100,69600], ebins = np.linspace(1,100,100)):
+        foxsi_spec = Foxsi2Spectrum(self, time_range = time_range, ebins = ebins)
+
+        return foxsi_spec
         
         
-                                        
+        
+class Foxsi2Spectrum():
+    def __init__(self,Foxsi2PhotonList, time_range=[69100,69600], ebins = np.linspace(1,100,100)):
+
+        spectrum_hits = Foxsi2PhotonList.data.query('wsmr_time > ' + str(time_range[0]) +
+                                        ' and wsmr_time < ' + str(time_range[1]))
+
+        h = np.histogram(spectrum_hits,bins = ebins)
+        self.data = h[0]
+        self.energies = h[1][0:-1]
+        self.time_range = time_range
+
+    def plot(self):
+        plt.loglog(self.energies,self.data,linestyle='steps-mid')
+        plt.xlabel('energy (keV')
+        plt.ylabel('Counts')
+        plt.show()
+
+        
+class Foxsi2LightCurve():
+    def __init__(self, Foxsi2PhotonList, time_range=[69100,69600], energy_range = [0,100]):
+
+        lightcurve_hits = Foxsi2PhotonList.data.query('energy2 > ' +str(energy_range[0]) +
+                                                        ' and energy2 < ' + str(energy_range[1]) +
+                                                        ' and wsmr_time > ' + str(time_range[0]) +
+                                                        ' and wsmr_time < ' + str(time_range[1]))
+          
+
+        tbins = np.linspace(int(time_range[0]), int(time_range[1], int(time_range[1]) - int(time_range[0]) + 1 ) )
+        
+        h = np.histogram(lightcurve_hits, bins = tbins)
+
+        self.data = h[0]
+        self.times = h[1][0:-1]
+
+    def plot(self):
+        plt.plot(self.times,self.data,linestyle='steps-mid')
+        plt.xlabel('WSMR time')
+        plt.ylabel('Counts')
+        plt.show()
         
 
+        
         
